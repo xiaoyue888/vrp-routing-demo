@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CVRPTW Demo — Interface Wireframe</title>
+    <link rel="stylesheet" href="wireframe.css" />
+  </head>
+  <body>
+    <div class="wireframe-banner">
+      LOW-FIDELITY WIREFRAME · layout and interaction only · not connected to the solver
+    </div>
+
+    <header class="page-header shell">
+      <a href="#" class="back-link">← Vehicle Routing case study</a>
+      <span class="technical-label">INTERACTIVE DEMO / CVRPTW</span>
+    </header>
+
+    <main class="shell">
+      <section class="intro">
+        <div>
+          <p class="eyebrow">Route planning laboratory</p>
+          <h1>Compare a simple routing rule with an optimized plan.</h1>
+        </div>
+        <p class="intro-copy">
+          Configure a synthetic delivery scenario, run both methods on identical inputs, and inspect
+          the resulting routes, service coverage, and operational trade-offs.
+        </p>
+      </section>
+
+      <section class="workspace" aria-label="Scenario configuration and results">
+        <aside class="controls">
+          <div class="panel-heading">
+            <span class="step">01</span>
+            <div>
+              <p class="technical-label">SCENARIO</p>
+              <h2>Set the operating conditions</h2>
+            </div>
+          </div>
+
+          <div class="segmented" aria-label="Scenario source">
+            <button class="active" type="button">Built-in</button>
+            <button type="button">Generate</button>
+            <button type="button">Upload CSV</button>
+          </div>
+
+          <div class="preset-note">
+            <strong>Built-in synthetic city</strong>
+            <span>12 customers · deterministic example</span>
+          </div>
+
+          <div class="field-grid">
+            <label>
+              Customers
+              <input type="number" value="12" disabled />
+            </label>
+            <label>
+              Vehicles
+              <input type="number" value="3" />
+            </label>
+            <label>
+              Capacity / vehicle
+              <input type="number" value="14" />
+            </label>
+            <label>
+              Average speed (km/h)
+              <input type="number" value="30" />
+            </label>
+            <label>
+              Shift length (minutes)
+              <input type="number" value="360" />
+            </label>
+            <label>
+              Random seed
+              <input type="number" value="20260915" disabled />
+            </label>
+          </div>
+
+          <details>
+            <summary>Solver settings</summary>
+            <label class="full-field">
+              OR-Tools time limit
+              <select>
+                <option>2 seconds</option>
+                <option>5 seconds</option>
+                <option>10 seconds</option>
+              </select>
+            </label>
+          </details>
+
+          <button class="run-button" type="button">Run both methods →</button>
+          <p class="privacy-note">Synthetic coordinates only. Uploaded files are not stored.</p>
+        </aside>
+
+        <section class="results">
+          <div class="results-empty">
+            <span class="step">02</span>
+            <div>
+              <p class="technical-label">RESULTS</p>
+              <h2>Ready to compare</h2>
+              <p>Run the scenario to populate the map, KPIs, and route details.</p>
+            </div>
+          </div>
+
+          <div class="status-strip">
+            <span class="status-dot"></span>
+            <strong>Example result state: all 12 orders served</strong>
+            <span>Same inputs and constraints for both methods</span>
+          </div>
+
+          <div class="map-card">
+            <div class="card-toolbar">
+              <div>
+                <p class="technical-label">ROUTE MAP</p>
+                <h3>What changed in the plan?</h3>
+              </div>
+              <div class="segmented compact">
+                <button type="button">Greedy</button>
+                <button class="active" type="button">Optimized</button>
+                <button type="button">Compare</button>
+              </div>
+            </div>
+
+            <div class="map-placeholder" role="img" aria-label="Placeholder route map">
+              <svg viewBox="0 0 760 390" aria-hidden="true">
+                <path class="route route-a" d="M380 195 L485 70 L625 120 L650 245 L520 320 L380 195" />
+                <path class="route route-b" d="M380 195 L245 85 L110 135 L135 275 L285 315 L380 195" />
+                <path class="route route-c" d="M380 195 L325 55 L455 35 L560 175 L380 195" />
+                <g class="customer-dots">
+                  <circle cx="485" cy="70" r="8" /><circle cx="625" cy="120" r="8" />
+                  <circle cx="650" cy="245" r="8" /><circle cx="520" cy="320" r="8" />
+                  <circle cx="245" cy="85" r="8" /><circle cx="110" cy="135" r="8" />
+                  <circle cx="135" cy="275" r="8" /><circle cx="285" cy="315" r="8" />
+                  <circle cx="325" cy="55" r="8" /><circle cx="455" cy="35" r="8" />
+                  <circle cx="560" cy="175" r="8" /><circle cx="430" cy="275" r="8" />
+                </g>
+                <rect class="depot" x="368" y="183" width="24" height="24" />
+              </svg>
+              <div class="legend">
+                <span><i class="line a"></i>Vehicle 1</span>
+                <span><i class="line b"></i>Vehicle 2</span>
+                <span><i class="line c"></i>Vehicle 3</span>
+                <span><i class="square"></i>Depot</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="comparison-card">
+            <div class="card-toolbar">
+              <div>
+                <p class="technical-label">DIRECT COMPARISON</p>
+                <h3>Operational summary</h3>
+              </div>
+              <span class="provisional">Example placeholders</span>
+            </div>
+            <div class="comparison-table" role="table" aria-label="KPI comparison">
+              <div class="table-row table-head" role="row">
+                <span>Metric</span><span>Greedy</span><span>Optimized</span><span>Difference</span>
+              </div>
+              <div class="table-row" role="row">
+                <strong>Total distance</strong><span>— km</span><span>— km</span><span>—</span>
+              </div>
+              <div class="table-row" role="row">
+                <strong>Estimated travel</strong><span>— min</span><span>— min</span><span>—</span>
+              </div>
+              <div class="table-row" role="row">
+                <strong>Vehicles used</strong><span>—</span><span>—</span><span>—</span>
+              </div>
+              <div class="table-row" role="row">
+                <strong>Orders served</strong><span>— / —</span><span>— / —</span><span>—</span>
+              </div>
+              <div class="table-row" role="row">
+                <strong>Capacity utilization</strong><span>—%</span><span>—%</span><span>—</span>
+              </div>
+              <div class="table-row" role="row">
+                <strong>Runtime</strong><span>— ms</span><span>— ms</span><span>Not a quality metric</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="route-card">
+            <div class="card-toolbar">
+              <div>
+                <p class="technical-label">ROUTE EXPLORER</p>
+                <h3>Inspect each vehicle</h3>
+              </div>
+              <select aria-label="Result method">
+                <option>Optimized routes</option>
+                <option>Greedy routes</option>
+              </select>
+            </div>
+            <details open>
+              <summary><strong>Vehicle 1</strong><span>4 stops · — km · —% capacity</span></summary>
+              <div class="route-stops">
+                <span>Depot<br /><small>00:00</small></span>
+                <span>C01<br /><small>arrival · load</small></span>
+                <span>C04<br /><small>arrival · load</small></span>
+                <span>C07<br /><small>arrival · load</small></span>
+                <span>Depot<br /><small>return</small></span>
+              </div>
+            </details>
+            <details>
+              <summary><strong>Vehicle 2</strong><span>4 stops · — km · —% capacity</span></summary>
+            </details>
+            <details>
+              <summary><strong>Vehicle 3</strong><span>4 stops · — km · —% capacity</span></summary>
+            </details>
+          </div>
+        </section>
+      </section>
+
+      <section class="states">
+        <div class="panel-heading">
+          <span class="step">03</span>
+          <div>
+            <p class="technical-label">STATES TO DESIGN</p>
+            <h2>Make failure and partial service visible</h2>
+          </div>
+        </div>
+        <div class="state-grid">
+          <article class="state-card error">
+            <p class="technical-label">INPUT ERROR</p>
+            <h3>CSV needs attention</h3>
+            <p>Row 7: window_end must be greater than window_start.</p>
+            <button type="button">Review CSV requirements</button>
+          </article>
+          <article class="state-card warning">
+            <p class="technical-label">PARTIAL SERVICE</p>
+            <h3>2 orders could not be served</h3>
+            <p>C014 exceeds vehicle capacity. C019 cannot be reached before its window closes.</p>
+            <button type="button">Show unserved orders on map</button>
+          </article>
+          <article class="state-card neutral">
+            <p class="technical-label">METHOD NOTE</p>
+            <h3>Optimized does not mean globally optimal</h3>
+            <p>OR-Tools searches for a strong feasible plan within the selected time limit.</p>
+            <button type="button">View assumptions</button>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="shell">
+      <span>Checkpoint C wireframe</span>
+      <span>No real addresses · no stored uploads · no public performance claims</span>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,4 @@
+customer_id,x_km,y_km,demand,service_minutes,window_start,window_end
+C001,2.5,7.0,4,10,60,180
+C002,-3.0,4.5,3,8,30,150
+C003,6.0,-2.0,5,12,120,260

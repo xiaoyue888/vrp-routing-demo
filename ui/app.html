@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Compare greedy and optimized synthetic delivery routes." />
+    <title>Vehicle Routing Optimization Demo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@400;500&amp;family=Jost:wght@400;500&amp;display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="anonymous" />
+    <link rel="stylesheet" href="app.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="anonymous" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <div class="demo-note">PUBLIC DEMO · SYNTHETIC ORDERS · OFFLINE DISTANCE · RESULTS ARE RUN-SPECIFIC</div>
+    <header class="site-header shell">
+      <a class="back-link" href="/case-study">← Vehicle Routing case study</a>
+      <span class="mono">INTERACTIVE DEMO / CVRPTW</span>
+    </header>
+
+    <main class="shell">
+      <section class="hero">
+        <div>
+          <p class="eyebrow">Route planning laboratory</p>
+          <h1>Compare a simple routing rule with an optimized plan.</h1>
+        </div>
+        <p class="hero-copy">
+          Configure a synthetic delivery scenario, run both methods on identical inputs, and
+          inspect the routes, service coverage, and operational trade-offs.
+        </p>
+      </section>
+
+      <section class="app-shell">
+        <form class="controls" id="scenario-form">
+          <div class="section-title">
+            <span class="step">01</span>
+            <div><p class="mono">SCENARIO</p><h2>Operating conditions</h2></div>
+          </div>
+
+          <div class="tabs" role="group" aria-label="Scenario source">
+            <button type="button" class="active" aria-pressed="true" data-source="built_in">Built-in</button>
+            <button type="button" aria-pressed="false" data-source="generate">Generate</button>
+            <button type="button" aria-pressed="false" data-source="csv">Upload CSV</button>
+          </div>
+
+          <div class="presets" aria-label="One-click generated scenarios">
+            <p class="mono">ONE-CLICK PRESETS</p>
+            <button type="button" data-preset="capacity">Capacity constrained</button>
+            <button type="button" data-preset="windows">Tight time windows</button>
+            <button type="button" data-preset="fleet">Fleet sufficient</button>
+          </div>
+
+          <div class="source-panel" id="source-summary">
+            <strong>Built-in synthetic city</strong>
+            <span>12 customers · deterministic example</span>
+          </div>
+          <div class="upload-panel hidden" id="upload-panel">
+            <label for="csv-file">Customer CSV</label>
+            <input id="csv-file" type="file" accept=".csv,text/csv" />
+            <a href="/customers.csv" download>Download schema example</a>
+          </div>
+
+          <div class="fields">
+            <label>Customers<input id="customer-count" type="number" min="5" max="100" value="12" disabled /></label>
+            <label>Vehicles<input id="vehicle-count" type="number" min="1" max="50" value="3" /></label>
+            <label>Capacity / vehicle<input id="vehicle-capacity" type="number" min="1" value="14" /></label>
+            <label>Average speed (offline only)<input id="average-speed" type="number" min="1" max="200" value="30" /></label>
+            <label>Shift length (minutes)<input id="shift-minutes" type="number" min="30" value="360" /></label>
+            <label>Random seed<input id="seed" type="number" min="0" value="20260915" disabled /></label>
+          </div>
+          <p class="fleet-advice hidden" id="fleet-advice"></p>
+
+          <details>
+            <summary>Solver settings</summary>
+            <p class="solver-field"><strong>Travel model</strong><br />Straight-line distance (offline)</p>
+            <label class="solver-field">OR-Tools time limit
+              <select id="time-limit"><option value="1">1 second</option><option value="2" selected>2 seconds</option><option value="5">5 seconds</option><option value="10">10 seconds</option></select>
+            </label>
+          </details>
+          <button class="run" id="run-button" type="submit">Run both methods →</button>
+          <p class="privacy">All routing calculations use offline distance. Uploaded CSV coordinates are processed in memory and are not stored.</p>
+        </form>
+
+        <section class="results" id="results">
+          <div class="section-title result-title">
+            <span class="step">02</span>
+            <div><p class="mono">RESULTS</p><h2 id="result-heading">Ready to compare</h2></div>
+          </div>
+          <div id="message" class="message neutral" aria-live="polite">Run a scenario to populate the map, KPIs, and route details.</div>
+          <div id="validation-check" class="validation-check hidden"></div>
+
+          <section class="result-section">
+            <div class="toolbar">
+              <div><p class="mono">ROUTE MAP</p><h3>What changed in the plan?</h3></div>
+              <div class="tabs compact" id="map-tabs" role="group" aria-label="Map result view">
+                <button type="button" aria-pressed="false" data-view="baseline">Greedy</button>
+                <button type="button" class="active" aria-pressed="true" data-view="optimized">Optimized</button>
+                <button type="button" aria-pressed="false" data-view="compare">Compare</button>
+              </div>
+            </div>
+            <div class="map" id="route-map">
+              <p class="empty-copy">Routes will appear here.</p>
+            </div>
+            <div class="map-inspector hidden" id="map-inspector" aria-live="polite"></div>
+            <div class="legend" id="route-legend"></div>
+          </section>
+
+          <section class="result-section">
+            <div class="toolbar">
+              <div><p class="mono">DIRECT COMPARISON</p><h3>Operational summary</h3></div>
+              <span class="badge">SAME INPUTS</span>
+            </div>
+            <div class="comparison" id="comparison-table"></div>
+          </section>
+
+          <section class="result-section">
+            <div class="toolbar">
+              <div><p class="mono">ROUTE EXPLORER</p><h3>Inspect each vehicle</h3></div>
+              <select id="route-method" aria-label="Route method"><option value="optimized">Optimized routes</option><option value="baseline">Greedy routes</option></select>
+            </div>
+            <div id="route-details" class="route-details"><p class="empty-copy">No route details yet.</p></div>
+          </section>
+
+          <section class="result-section unserved hidden" id="unserved-section">
+            <p class="mono">UNSERVED ORDERS</p>
+            <h3>Why some orders were not assigned</h3>
+            <div id="unserved-list"></div>
+          </section>
+
+          <details class="method-note">
+            <summary>Method and metric assumptions</summary>
+            <p>
+              Both methods use the same selected travel matrix and rounded-up travel times,
+              homogeneous fleet, service times, capacity, and time windows. “Optimized” means an
+              OR-Tools solution found within the selected limit, not proven global optimality.
+            </p>
+            <p id="run-metadata"></p>
+          </details>
+        </section>
+      </section>
+    </main>
+
+    <footer class="shell">
+      <span>Vehicle Routing Optimization Demo</span>
+      <span>No real addresses · no stored uploads · no public performance claims</span>
+    </footer>
+  </body>
+</html>

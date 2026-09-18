@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: vrp-routing-demo
+    runtime: python
+    plan: free
+    buildCommand: pip install .
+    startCommand: python -m vrp_demo.web
+    healthCheckPath: /healthz
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: VRP_HOST
+        value: 0.0.0.0
+      - key: VRP_ENABLE_ROAD_ROUTING
+        value: "false"
