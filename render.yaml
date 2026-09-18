@@ -13,3 +13,5 @@ services:
         value: 0.0.0.0
       - key: VRP_ENABLE_ROAD_ROUTING
         value: "false"
+      - key: VRP_CASE_STUDY_URL
+        value: https://xiaoyue-portfolio.pages.dev/vehicle-routing.html

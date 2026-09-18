@@ -113,10 +113,11 @@ infrastructure-level rate limiting and a more scalable serving layer.
 
 ## Publication boundary
 
-The Python runtime remains separate from the static website. No public deployment
-is configured yet. Deployment must preserve offline routing as the public default
-and replace local navigation links only after staging URLs are approved. The code
-is licensed separately under the MIT License below.
+The Python runtime remains separate from the static website. A public Render
+staging service is available at `https://vrp-routing-demo.onrender.com/`, while
+the GitHub repository remains private. The hosted service preserves offline
+routing as its public mode. The code is licensed separately under the MIT License
+below.
 
 ## Render staging configuration
 
@@ -133,10 +134,10 @@ The health-check endpoint is:
 It returns only service status and the public routing mode. It does not run the
 solver or expose scenario data.
 
-Set the approved website return link in Render after the portfolio has a staging URL:
+The approved website return link is declared in `render.yaml`:
 
 ```text
-VRP_CASE_STUDY_URL=https://example.com/vehicle-routing.html
+VRP_CASE_STUDY_URL=https://xiaoyue-portfolio.pages.dev/vehicle-routing.html
 ```
 
 If the value is missing or invalid, the Demo falls back to the local case-study URL.
