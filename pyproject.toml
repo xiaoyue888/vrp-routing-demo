@@ -21,3 +21,6 @@ testpaths = ["tests"]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/vrp_demo"]
+
+[tool.hatch.build.targets.wheel.force-include]
+"ui" = "vrp_demo/ui"

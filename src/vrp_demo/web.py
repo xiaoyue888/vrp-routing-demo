@@ -28,7 +28,13 @@ from .scenarios import built_in_scenario, random_scenario
 from .service import run_comparison
 
 MAX_REQUEST_BYTES = 1_000_000
-UI_DIRECTORY = Path(__file__).resolve().parents[2] / "ui"
+PACKAGE_UI_DIRECTORY = Path(__file__).resolve().parent / "ui"
+SOURCE_UI_DIRECTORY = Path(__file__).resolve().parents[2] / "ui"
+UI_DIRECTORY = (
+    PACKAGE_UI_DIRECTORY
+    if PACKAGE_UI_DIRECTORY.is_dir()
+    else SOURCE_UI_DIRECTORY
+)
 SOLVER_SLOTS = threading.BoundedSemaphore(2)
 RATE_LOCK = threading.Lock()
 RATE_EVENTS: dict[str, deque[float]] = defaultdict(deque)

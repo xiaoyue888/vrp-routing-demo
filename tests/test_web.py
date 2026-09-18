@@ -5,6 +5,7 @@ from vrp_demo.csv_io import CSVValidationError
 from vrp_demo.web import (
     DEFAULT_CASE_STUDY_URL,
     RunRequest,
+    UI_DIRECTORY,
     _friendly_error,
     case_study_url,
     deployment_host,
@@ -13,6 +14,13 @@ from vrp_demo.web import (
     scenario_from_request,
     scenario_summary,
 )
+
+
+def test_ui_directory_contains_deployable_entrypoint():
+    assert UI_DIRECTORY.is_dir()
+    assert (UI_DIRECTORY / "app.html").is_file()
+    assert (UI_DIRECTORY / "app.js").is_file()
+    assert (UI_DIRECTORY / "app.css").is_file()
 
 
 def test_execute_built_in_request_returns_comparison_contract():
