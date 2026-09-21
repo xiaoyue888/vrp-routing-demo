@@ -203,7 +203,7 @@ function renderComparison() {
   ];
   $("comparison-table").outerHTML = `<table class="comparison" id="comparison-table">
     <thead><tr><th scope="col">Metric</th><th scope="col">Greedy</th><th scope="col">Optimized</th><th scope="col">Difference</th></tr></thead>
-    <tbody>${rows.map((row) => `<tr><th scope="row">${row[0]}</th><td>${row[1]}</td><td>${row[2]}</td><td class="${row[4] ? "delta-good" : ""}">${row[3]}</td></tr>`).join("")}</tbody>
+    <tbody>${rows.map((row) => `<tr><th scope="row">${row[0]}</th><td data-label="Greedy">${row[1]}</td><td data-label="Optimized">${row[2]}</td><td data-label="Difference" class="${row[4] ? "delta-good" : ""}">${row[3]}</td></tr>`).join("")}</tbody>
   </table>`;
 }
 

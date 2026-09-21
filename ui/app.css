@@ -161,8 +161,45 @@ footer { margin-top: 60px; border-top: 1px solid var(--rule); color: var(--muted
   .controls, .results { padding: 20px; }
   .fields { grid-template-columns: 1fr; }
   .compact { width: 100%; }
-  .comparison { overflow-x: auto; }
-  .comparison { min-width: 650px; }
+  table.comparison { display: block; border: 0; }
+  .comparison thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+  .comparison tbody { display: grid; gap: 10px; }
+  .comparison tr {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    border: 1px solid #858a85;
+  }
+  .comparison tbody th {
+    grid-column: 1 / -1;
+    padding: 9px 11px;
+    border: 0;
+    border-bottom: 1px solid var(--rule);
+    background: #f0f0ea;
+  }
+  .comparison td {
+    min-width: 0;
+    padding: 10px 7px;
+    border: 0;
+    overflow-wrap: anywhere;
+  }
+  .comparison td + td { border-left: 1px solid var(--rule); }
+  .comparison td::before {
+    content: attr(data-label);
+    display: block;
+    margin-bottom: 5px;
+    color: var(--muted);
+    font: 9px "JetBrains Mono", Consolas, monospace;
+    text-transform: uppercase;
+  }
   .map { min-height: 460px; }
   .map.leaflet-container { height: 520px; min-height: 520px; }
   .map > svg.synthetic-map { height: 460px; }
