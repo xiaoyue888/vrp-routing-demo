@@ -2,10 +2,11 @@ import pytest
 from pydantic import ValidationError
 
 from vrp_demo.csv_io import CSVValidationError
+from vrp_demo.road_network import RoadNetworkError, osrm_base_url
 from vrp_demo.web import (
     DEFAULT_CASE_STUDY_URL,
-    RunRequest,
     UI_DIRECTORY,
+    RunRequest,
     _friendly_error,
     case_study_url,
     deployment_host,
@@ -53,6 +54,24 @@ def test_road_routing_requires_explicit_server_opt_in(monkeypatch):
     monkeypatch.delenv("VRP_ENABLE_ROAD_ROUTING", raising=False)
     with pytest.raises(ValueError, match="not enabled"):
         execute_request({"routing_mode": "road"})
+
+
+def test_road_routing_requires_explicit_provider_url(monkeypatch):
+    monkeypatch.delenv("VRP_OSRM_URL", raising=False)
+    with pytest.raises(RoadNetworkError, match="requires VRP_OSRM_URL"):
+        osrm_base_url()
+
+
+@pytest.mark.parametrize("value", ["", "router.example", "ftp://router.example"])
+def test_invalid_road_provider_url_is_rejected(monkeypatch, value):
+    monkeypatch.setenv("VRP_OSRM_URL", value)
+    with pytest.raises(RoadNetworkError, match=r"HTTP\(S\)"):
+        osrm_base_url()
+
+
+def test_road_provider_url_accepts_http_and_removes_trailing_slash(monkeypatch):
+    monkeypatch.setenv("VRP_OSRM_URL", "https://router.example/")
+    assert osrm_base_url() == "https://router.example"
 
 
 def test_deployment_defaults_stay_local(monkeypatch):

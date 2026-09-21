@@ -2,7 +2,6 @@ import pytest
 
 from vrp_demo.csv_io import CSVValidationError, customers_from_csv_text
 
-
 VALID = """customer_id,x_km,y_km,demand,service_minutes,window_start,window_end
 C001,2.5,7.0,4,10,60,180
 """

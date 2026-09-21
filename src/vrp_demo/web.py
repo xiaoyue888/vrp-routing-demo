@@ -7,12 +7,12 @@ exposes JSON endpoints without adding a deployment framework or persistence.
 from __future__ import annotations
 
 import argparse
-from collections import defaultdict, deque
 import json
 import math
 import os
 import threading
 import time
+from collections import defaultdict, deque
 from http import HTTPStatus
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path

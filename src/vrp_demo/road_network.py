@@ -1,26 +1,25 @@
 """Road-network travel data for the synthetic portfolio scenarios.
 
 Coordinates are projected into central Singapore and sent to an OSRM-compatible
-service. The module is intentionally provider-neutral so a self-hosted endpoint can
-replace the public demo server through ``VRP_OSRM_URL``.
+service only when road mode is explicitly enabled. The module is provider-neutral,
+and the endpoint must be configured through ``VRP_OSRM_URL``.
 """
 
 from __future__ import annotations
 
-from collections import OrderedDict
-from concurrent.futures import ThreadPoolExecutor
-from dataclasses import dataclass
 import json
 import math
 import os
 import threading
+from collections import OrderedDict
+from concurrent.futures import ThreadPoolExecutor
+from dataclasses import dataclass
 from urllib.error import HTTPError, URLError
-from urllib.parse import urlencode
+from urllib.parse import urlencode, urlsplit
 from urllib.request import Request, urlopen
 
 from .models import Scenario, SolutionResult
 
-DEFAULT_OSRM_URL = "https://router.project-osrm.org"
 MAP_CENTER = (1.3521, 103.8198)
 TABLE_CHUNK_SIZE = 40
 _CACHE_LOCK = threading.Lock()
@@ -43,8 +42,17 @@ class RoadNetworkData:
         return self.distance_matrix, self.time_matrix
 
 
-def _base_url() -> str:
-    return os.environ.get("VRP_OSRM_URL", DEFAULT_OSRM_URL).rstrip("/")
+def osrm_base_url() -> str:
+    """Return an explicitly configured HTTP(S) OSRM-compatible endpoint."""
+
+    value = os.environ.get("VRP_OSRM_URL", "").strip().rstrip("/")
+    parsed = urlsplit(value)
+    if parsed.scheme not in {"http", "https"} or not parsed.netloc:
+        raise RoadNetworkError(
+            "Road routing requires VRP_OSRM_URL to point to an HTTP(S) "
+            "OSRM-compatible service."
+        )
+    return value
 
 
 def scenario_coordinates(scenario: Scenario) -> list[tuple[float, float]]:
@@ -60,7 +68,7 @@ def scenario_coordinates(scenario: Scenario) -> list[tuple[float, float]]:
 
 def road_network_data(scenario: Scenario) -> RoadNetworkData:
     coordinates = scenario_coordinates(scenario)
-    base_url = _base_url()
+    base_url = osrm_base_url()
     cache_key = base_url + "|" + "|".join(f"{lat:.6f},{lon:.6f}" for lat, lon in coordinates)
     with _CACHE_LOCK:
         cached = _CACHE.get(cache_key)

@@ -1,5 +1,8 @@
 # Vehicle Routing Optimization Demo
 
+[Live Demo](https://vrp-routing-demo.onrender.com/) ·
+[Portfolio Case Study](https://xiaoyue-portfolio.pages.dev/vehicle-routing.html)
+
 This privacy-safe portfolio Demo plans last-mile delivery routes for a homogeneous
 fleet operating from one depot. It solves a focused capacitated vehicle-routing
 problem with customer time windows (CVRPTW) and compares two methods on identical
@@ -12,6 +15,13 @@ All included scenarios and examples are synthetic. The public interface uses
 offline Euclidean distance at a configured average speed. The code does not store
 uploads or contain client data. An opt-in road-network adapter remains available
 for future local evaluation.
+
+## Project status
+
+- Python 3.11 or newer.
+- Automated tests cover the solver, validation, CSV, scenario, and web contracts.
+- CI runs the tests and Ruff checks on Python 3.11 and 3.12.
+- MIT licensed; synthetic data only.
 
 ## Verified example
 
@@ -41,7 +51,8 @@ From this directory:
 ```powershell
 python -m pip install -e ".[dev]"
 python -m vrp_demo --time-limit 2
-pytest
+python -m pytest
+python -m ruff check .
 ```
 
 Start the interactive local Demo:
@@ -54,8 +65,8 @@ Then open `http://127.0.0.1:4190`. The local server holds no database and writes
 no scenario or CSV content to disk.
 
 The public interface does not call OSRM. To evaluate the retained road adapter
-locally, explicitly enable it and set `VRP_OSRM_URL` to an OSRM-compatible base
-URL:
+locally, explicitly enable it and set `VRP_OSRM_URL` to a self-hosted or contracted
+OSRM-compatible base URL. Road mode fails closed when this URL is missing or invalid:
 
 ```powershell
 $env:VRP_OSRM_URL = "http://127.0.0.1:5000"
@@ -102,26 +113,25 @@ straight-line matrix. In Compare, the greedy route is a wide translucent warm
 dashed line beneath a narrower blue optimized line, keeping both visible.
 
 Uploaded CSV coordinates stay in offline mode and are not sent to a third-party
-routing service. A road-network edition would require a self-hosted or contracted
-routing provider before public deployment.
+routing service. The optional road-network adapter requires an explicitly configured
+self-hosted or contracted routing provider.
 
 The HTTP adapter caps solver requests at 10 seconds, allows two concurrent solves,
 applies a per-IP request limit, disables directory listing, returns safe input
 messages, and sends baseline security headers. It is suitable for this low-traffic
-portfolio staging service; a higher-traffic production use case would still need
+portfolio Demo service; a higher-traffic production use case would still need
 infrastructure-level rate limiting and a more scalable serving layer.
 
-## Publication boundary
+## Live deployment
 
-The Python runtime remains separate from the static website. A public Render
-staging service is available at `https://vrp-routing-demo.onrender.com/`, while
-the GitHub repository remains private. The hosted service preserves offline
-routing as its public mode. The code is licensed separately under the MIT License
-below.
+The Python runtime remains separate from the static portfolio website. The live
+Demo is hosted at `https://vrp-routing-demo.onrender.com/` and preserves offline
+routing as its public mode. This repository contains only synthetic scenarios and
+newly written portfolio code; it contains no client data or client implementation.
 
-## Render staging configuration
+## Render configuration
 
-`render.yaml` defines the proposed free staging Web Service. Render supplies its
+`render.yaml` defines the free Render Web Service. Render supplies its
 port through `PORT`; the service reads that value and uses `VRP_HOST=0.0.0.0` in
 the hosted environment while keeping `127.0.0.1:4190` as the local default.
 
